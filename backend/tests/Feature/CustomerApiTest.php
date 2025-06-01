@@ -6,10 +6,20 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Customer;
+use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 
 class CustomerApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a test user and authenticate
+        $this->actingAs(\App\Models\User::factory()->create());
+    }
 
     public function test_can_list_customers(): void
     {

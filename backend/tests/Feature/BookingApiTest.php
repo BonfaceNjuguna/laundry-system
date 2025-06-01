@@ -9,10 +9,20 @@ use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 
 class BookingApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Create a test user and authenticate
+        Sanctum::actingAs(User::factory()->create());
+    }
 
     public function test_can_list_bookings(): void
     {
