@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreServiceRequest;
-use App\Models\Booking;
+use App\Models\Service;
 
 use Illuminate\Http\JsonResponse;
 
