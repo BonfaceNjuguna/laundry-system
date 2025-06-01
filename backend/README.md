@@ -1,61 +1,186 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laundry System API Backend – Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A RESTful API built with Laravel to manage customers, services, and bookings.
 
-## About Laravel
+## 🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Manage Customers (CRUD)
+- Manage Services (CRUD)
+- Manage Bookings (CRUD)
+- Authentication using Laravel Sanctum
+- Feature tests for all endpoints
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Tech Stack
 
-## Learning Laravel
+- **Framework:** Laravel 11+
+- **Database:** SQLite (for testing) / MySQL / PostgreSQL
+- **Auth:** Laravel Sanctum
+- **Testing:** PHPUnit
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 📦 Installation
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+# Clone the repo (from the root of your workspace)
+git clone <your-repo-url>
+cd backend
 
-## Laravel Sponsors
+# Install dependencies
+composer install
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Copy and configure environment
+cp .env.example .env
+php artisan key:generate
 
-### Premium Partners
+# Set DB connection in .env
+# Example for SQLite
+touch database/database.sqlite
+DB_CONNECTION=sqlite
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Or MySQL/PostgreSQL (edit as needed)
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=your_db
+# DB_USERNAME=root
+# DB_PASSWORD=
 
-## Contributing
+# Run migrations
+php artisan migrate
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# (Optional) Seed sample data
+php artisan db:seed
 
-## Code of Conduct
+# Serve the app (default: http://127.0.0.1:8000)
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 🔐 Authentication
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+This project uses **Laravel Sanctum** for API token auth.
 
-## License
+To authenticate:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+POST /api/login
+
+{
+  "email": "user@example.com",
+  "password": "secret"
+}
+```
+
+Response:
+```json
+{
+  "token": "your_personal_access_token"
+}
+```
+
+Use it in headers:
+```
+Authorization: Bearer your_personal_access_token
+```
+
+---
+
+## 📘 API Endpoints
+
+All routes are prefixed with `/api`.
+
+### 📁 Bookings
+- `GET    /bookings`
+- `POST   /bookings`
+- `GET    /bookings/{id}`
+- `PUT    /bookings/{id}`
+- `DELETE /bookings/{id}`
+
+### 👤 Customers
+- `GET    /customers`
+- `POST   /customers`
+- `GET    /customers/{id}`
+- `PUT    /customers/{id}`
+- `DELETE /customers/{id}`
+
+### 🛠 Services
+- `GET    /services`
+- `POST   /services`
+- `GET    /services/{id}`
+- `PUT    /services/{id}`
+- `DELETE /services/{id}`
+
+---
+
+## ✅ Running Tests
+
+```bash
+php artisan test
+```
+
+Tests use an in-memory SQLite database and cover all major endpoints.
+
+---
+
+## 🧪 Sample `.env` for SQLite
+
+```env
+APP_NAME=LaundrySystem
+APP_ENV=local
+APP_KEY=base64:...
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=sqlite
+DB_DATABASE=./database/database.sqlite
+
+SANCTUM_STATEFUL_DOMAINS=localhost
+```
+
+---
+
+## 📂 Folder Structure Highlights
+
+```
+app/
+  Http/
+    Controllers/
+    Requests/
+    Resources/
+  Models/
+database/
+  migrations/
+  factories/
+  seeders/
+tests/
+  Feature/
+```
+
+---
+
+## 📝 License
+
+[MIT](LICENSE)
+
+---
+
+## 👤 Author
+
+Built by [Bonface Kabiru](https://github.com/BonfaceKabiru)
+
+---
+
+## 🌐 Frontend
+
+The frontend for this project is located in the [`frontend/`](../frontend/README.md) folder and is built with Vue 3 + Vite.
+
+---
+
+## ℹ️ Notes
+
+- Make sure to run both backend and frontend for full functionality.
+- Configure additional environment variables as needed for mail, queue, etc.
