@@ -25,7 +25,7 @@ A RESTful API built with Laravel to manage customers, services, and bookings.
 
 ```bash
 # Clone the repo (from the root of your workspace)
-git clone <your-repo-url>
+git clone <https://github.com/BonfaceNjuguna/laundry-system>
 cd backend
 
 # Install dependencies
