@@ -4,6 +4,13 @@ import { useRouter } from 'vue-router';
 
 const user = ref(null);
 const errors = ref(null);
+const status = ref(null); 
+const storedToken = localStorage.getItem('token');
+
+if (storedToken) {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+}
+
 
 export function useAuth() {
   const router = useRouter();
@@ -18,18 +25,33 @@ export function useAuth() {
   };
 
   const login = async (form) => {
-    errors.value = null;
-    try {
-      await axios.get('/sanctum/csrf-cookie'); // Important!
-      await axios.post('/api/login', form);
-      await getUser();
+  errors.value = null;
+  status.value = null;
+
+  try {
+    const response = await axios.post('/api/login', form);
+    const token = response.data.access_token;
+
+    localStorage.setItem('token', token);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    await getUser();
+
+    status.value = 'Login successful. Redirecting...';
+    setTimeout(() => {
       router.push('/dashboard');
-    } catch (err) {
-      if (err.response.status === 422) {
-        errors.value = err.response.data.errors;
-      }
+    }, 1000);
+  } catch (err) {
+    if (err.response?.status === 422) {
+      const allErrors = Object.values(err.response.data.errors).flat().join(' ');
+      errors.value = allErrors;
+    } else if (err.response?.status === 401) {
+      errors.value = err.response.data.message || 'Invalid email or password.';
+    } else {
+      errors.value = 'Something went wrong. Please try again.';
     }
-  };
+  }
+};
 
   const logout = async () => {
     await axios.post('/logout');
@@ -40,6 +62,7 @@ export function useAuth() {
   return {
     user,
     errors,
+    status,
     getUser,
     login,
     logout,
