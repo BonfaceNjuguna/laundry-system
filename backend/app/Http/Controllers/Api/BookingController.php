@@ -12,7 +12,8 @@ class BookingController extends Controller
 {
     public function index(): JsonResponse
     {
-        return response()->json(Booking::all());
+        $bookings = Booking::with(['customer', 'service'])->get();
+        return response()->json($bookings);
     }
 
     public function store(StoreBookingRequest $storeBookingRequest): JsonResponse
