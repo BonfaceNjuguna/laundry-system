@@ -37,7 +37,7 @@
         <h2 class="text-xl font-semibold mb-4">All Bookings</h2>
         <ul>
           <li v-for="booking in bookings.all" :key="booking.id" class="py-2 border-b text-sm">
-            {{ booking.location }} – {{ formatDate(booking.start_date) }} ({{ booking.status }})
+            <strong>{{ booking.customer?.name }}</strong> on {{ formatDate(booking.start_date) }} ({{ booking.status }})
           </li>
           <li v-if="bookings.all.length === 0" class="text-gray-500">No bookings found</li>
         </ul>
@@ -93,12 +93,19 @@ async function fetchBookings() {
     const res = await api.get('/api/bookings')
     const all = res.data
     const now = new Date()
+    now.setHours(0, 0, 0, 0) // Normalize to start of day for comparison
 
     bookings.value.all = all
-    bookings.value.pending = all.filter(b => b.status === 'pending')
-    bookings.value.upcoming = all.filter(b =>
-      b.status === 'confirmed' && new Date(b.start_date) > now
-    )
+
+    bookings.value.upcoming = all.filter(b => {
+      const endDate = new Date(b.end_date || b.start_date) // fallback if no end_date
+      return endDate >= now && b.status !== 'pending' // upcoming if end_date >= today and not pending
+    })
+
+    bookings.value.pending = all.filter(b => {
+      const endDate = new Date(b.end_date || b.start_date)
+      return endDate < now || b.status === 'pending' // pending if end_date < today OR status pending
+    })
   } catch {
     bookings.value = { all: [], pending: [], upcoming: [] }
   } finally {
