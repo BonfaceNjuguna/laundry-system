@@ -1,47 +1,33 @@
 <template>
   <div class="flex h-screen bg-gray-100">
-    <Sidebar
-      :username="username"
-      @open-booking="openBookingModal = true"
-      @logout="logout"
-    />
+    <Sidebar :username="username" @open-booking="() => { selectedBooking.value = null; openBookingModal.value = true }"
+      @logout="logout" />
 
     <main class="flex-1 p-4 overflow-y-auto">
       <div class="rounded-xl bg-white p-4 shadow">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold">All Bookings</h2>
-          <button
-            class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-            @click="openBooking(null)"
-          >
+          <button class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700" @click="openBooking(null)">
             + Add Booking
           </button>
         </div>
 
         <ul v-if="bookings.all.length">
-          <li
-            v-for="booking in bookings.all"
-            :key="booking.id"
-            class="py-2 border-b text-sm flex justify-between items-center"
-          >
+          <li v-for="booking in bookings.all" :key="booking.id"
+            class="py-2 border-b text-sm flex justify-between items-center">
             <div>
-              <strong>{{ booking.customer?.name }}</strong> – 
+              <strong>{{ booking.customer?.name }}</strong> –
               {{ booking.service?.name }} @ {{ booking.location }}<br />
               <span class="text-gray-500 text-xs">
                 {{ formatDate(booking.start_date) }} ({{ booking.status }})
               </span>
             </div>
             <div class="flex gap-2">
-              <button
-                class="bg-yellow-400 px-2 py-1 text-xs rounded hover:bg-yellow-500"
-                @click="openBooking(booking)"
-              >
+              <button class="bg-yellow-400 px-2 py-1 text-xs rounded hover:bg-yellow-500" @click="openBooking(booking)">
                 Edit
               </button>
-              <button
-                class="bg-red-500 text-white px-2 py-1 text-xs rounded hover:bg-red-600"
-                @click="deleteBooking(booking.id)"
-              >
+              <button class="bg-red-500 text-white px-2 py-1 text-xs rounded hover:bg-red-600"
+                @click="deleteBooking(booking.id)">
                 Delete
               </button>
             </div>
@@ -51,13 +37,8 @@
       </div>
     </main>
 
-    <BookingModal
-      v-if="openBookingModal"
-      :booking="selectedBooking"
-      @close="openBookingModal = false"
-      @saved="handleBookingSaved"
-      @refresh="fetchBookings"
-    />
+    <BookingModal v-if="openBookingModal" :booking="selectedBooking" @close="openBookingModal = false"
+      @saved="handleBookingSaved" @refresh="fetchBookings" />
   </div>
 </template>
 

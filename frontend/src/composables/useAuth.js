@@ -56,6 +56,7 @@ export function useAuth() {
     localStorage.removeItem('token');
     delete axios.defaults.headers.common['Authorization'];
     user.value = null;
+    status.value = '';
     router.push('/login');
   };
 
