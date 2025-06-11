@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center h-screen bg-gray-100">
     <form @submit.prevent="handleLogin" class="bg-white p-8 rounded shadow-md w-full max-w-md">
-      <h2 class="flex text-2xl font-bold mb-6 justify-center">Tichi Cleaners</h2>
+      <h2 class="flex text-2xl font-bold mb-6 justify-center text-gray-800">Tichi Cleaners</h2>
 
       <div v-if="errors" class="mb-4 p-3 bg-red-100 text-red-700 rounded">
         {{ errors }}
@@ -29,7 +29,7 @@
       />
       <button
         type="submit"
-        class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         :disabled="submitting"
         :style="{ cursor: submitting ? 'not-allowed' : 'pointer' }"
       >

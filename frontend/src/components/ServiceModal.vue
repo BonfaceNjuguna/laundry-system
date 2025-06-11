@@ -13,9 +13,9 @@
           class="w-full p-2 border rounded"
         />
         <input
-          type="number"
-          v-model="form.price"
-          placeholder="Price"
+          type="text"
+          v-model="form.description"
+          placeholder="Description"
           class="w-full p-2 border rounded"
         />
       </div>
@@ -57,8 +57,8 @@ const submitting = ref(false)
 
 watch(() => props.service, (val) => {
   form.value = val
-    ? { name: val.name, price: val.price}
-    : { name: '', price: '' }
+    ? { name: val.name, description: val.description}
+    : { name: '', description: '' }
 }, { immediate: true })
 
 async function saveService() {

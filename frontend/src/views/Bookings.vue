@@ -6,34 +6,36 @@
     <main class="flex-1 p-4 overflow-y-auto">
       <div class="rounded-xl bg-white p-4 shadow">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold">All Bookings</h2>
-          <button class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700" @click="openBooking(null)">
-            + Add Booking
+          <h2 class="text-xl font-semibold text-gray-800">All Bookings</h2>
+          <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700" @click="openBooking(null)">
+            + Add a Booking
           </button>
         </div>
 
         <ul v-if="bookings.all.length">
-          <li v-for="booking in bookings.all" :key="booking.id"
-            class="py-2 border-b text-sm flex justify-between items-center">
-            <div>
-              <strong>{{ booking.customer?.name }}</strong> –
-              {{ booking.service?.name }} @ {{ booking.location }}<br />
-              <span class="text-gray-500 text-xs">
-                {{ formatDate(booking.start_date) }} ({{ booking.status }})
-              </span>
-            </div>
-            <div class="flex gap-2">
-              <button class="bg-yellow-400 px-2 py-1 text-xs rounded hover:bg-yellow-500" @click="openBooking(booking)">
-                Edit
-              </button>
-              <button class="bg-red-500 text-white px-2 py-1 text-xs rounded hover:bg-red-600"
-                @click="deleteBooking(booking.id)">
-                Delete
-              </button>
+          <li v-for="booking in bookings.all" :key="booking.id" class="py-2 text-sm">
+            <div class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2">
+              <div>
+                <strong>{{ booking.customer?.name }}</strong> –
+                {{ booking.service?.name }} @ {{ booking.location }}<br />
+                <span class="text-gray-800 text-xs">
+                  {{ formatDate(booking.start_date) }} ({{ booking.status }})
+                </span>
+              </div>
+              <div class="flex gap-2">
+                <button class="bg-green-500 px-2 py-1 text-white text-xs rounded hover:bg-green-600"
+                  @click="openBooking(booking)">
+                  Edit
+                </button>
+                <button class="bg-red-500 text-white px-2 py-1 text-xs rounded hover:bg-red-600"
+                  @click="deleteBooking(booking.id)">
+                  Delete
+                </button>
+              </div>
             </div>
           </li>
         </ul>
-        <p v-else class="text-gray-500">No bookings found</p>
+        <p v-else class="text-gray-800">No bookings found</p>
       </div>
     </main>
 

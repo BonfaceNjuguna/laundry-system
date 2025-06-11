@@ -10,9 +10,9 @@
     <main class="flex-1 p-4 overflow-y-auto">
       <div class="rounded-xl bg-white p-4 shadow overflow-y-auto">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold">All Customers</h2>
+          <h2 class="text-xl font-semibold text-gray-800">All Customers</h2>
           <button
-            class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+            class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700"
             @click="openCustomerModal(null)"
           >
             + Add Customer
@@ -23,18 +23,18 @@
           <li
             v-for="customer in customers"
             :key="customer.id"
-            class="py-2 border-b text-sm flex justify-between items-center"
+            class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2"
           >
             <div>
               <strong>{{ customer.name }}</strong><br />
-              <span class="text-gray-500 text-xs">
+              <span class="text-gray-800 text-xs">
                 Phone: {{ customer.phone }}<br />
                 Email: {{ customer.email || 'N/A' }}
               </span>
             </div>
             <div class="flex gap-2">
               <button
-                class="bg-yellow-400 px-2 py-1 text-xs rounded hover:bg-yellow-500"
+                class="bg-green-500 px-2 py-1 text-white text-xs rounded hover:bg-green-600"
                 @click="openCustomerModal(customer)"
               >
                 Edit
@@ -48,7 +48,7 @@
             </div>
           </li>
         </ul>
-        <p v-else class="text-gray-500">No customers found</p>
+        <p v-else class="text-gray-800">No customers found</p>
       </div>
     </main>
 

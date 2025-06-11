@@ -9,9 +9,9 @@
     <main class="flex-1 p-4 overflow-y-auto">
       <div class="rounded-xl bg-white p-4 shadow">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold">All Services</h2>
+          <h2 class="text-xl font-semibold text-gray-800">All Services</h2>
           <button
-            class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+            class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700"
             @click="openServiceModal(null)"
           >
             + Add Service
@@ -22,17 +22,17 @@
           <li
             v-for="service in services"
             :key="service.id"
-            class="py-2 border-b text-sm flex justify-between items-center"
+            class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2"
           >
             <div>
               <strong>{{ service.name }}</strong><br />
-              <span class="text-gray-500 text-xs">
-                Price: {{ service.price }}
+              <span class="text-gray-800 text-xs">
+                Description: {{ service.description }}
               </span>
             </div>
             <div class="flex gap-2">
               <button
-                class="bg-yellow-400 px-2 py-1 text-xs rounded hover:bg-yellow-500"
+                class="bg-green-500 px-2 py-1 text-white text-xs rounded hover:bg-green-600"
                 @click="openServiceModal(service)"
               >
                 Edit
@@ -46,7 +46,7 @@
             </div>
           </li>
         </ul>
-        <p v-else class="text-gray-500">No services found</p>
+        <p v-else class="text-gray-800">No services found</p>
       </div>
     </main>
 

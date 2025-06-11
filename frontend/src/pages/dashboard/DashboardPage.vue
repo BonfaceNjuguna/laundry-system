@@ -1,54 +1,61 @@
 <template>
   <div class="flex h-screen bg-gray-100">
-    <SideBar
-      :username="username"
-      @open-booking="openBookingModal = true"
-      @logout="logout"
-    />
+    <SideBar :username="username" @open-booking="openBookingModal = true" @logout="logout" />
 
     <!-- Main Dashboard Layout -->
-    <main class="w-full p-4 grid grid-cols-2 gap-4">
+    <main class="flex-1 p-4 grid grid-cols-2 gap-4">
       <div class="grid grid-rows-2 gap-4">
         <div class="rounded-xl bg-white p-4 shadow">
-          <h2 class="text-xl font-semibold mb-2">Upcoming Bookings</h2>
+          <h2 class="text-xl font-semibold mb-2 text-gray-800">Upcoming Bookings</h2>
           <ul>
-            <li v-for="booking in bookings.upcoming" :key="booking.id" class="py-2 border-b text-sm">
-              <strong>{{ booking.customer?.name }}</strong> -
-              {{ booking.service?.name }} @ {{ booking.location }}<br />
-              <span class="text-gray-500 text-xs">{{ formatDate(booking.start_date) }}</span>
+            <li v-for="booking in bookings.upcoming" :key="booking.id" class="py-2 text-sm">
+              <div class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2">
+                <div>
+                  <strong>{{ booking.customer?.name }}</strong> –
+                  {{ booking.service?.name }} @ {{ booking.location }}<br />
+                  <span class="text-gray-800 text-xs">{{ formatDate(booking.start_date) }}</span>
+                </div>
+              </div>
             </li>
+            <li v-if="bookings.upcoming.length === 0" class="text-gray-800">No upcoming bookings</li>
           </ul>
-
         </div>
 
         <div class="rounded-xl bg-white p-4 shadow">
-          <h2 class="text-xl font-semibold mb-2">Pending Bookings</h2>
+          <h2 class="text-xl font-semibold mb-2 text-gray-800">Pending Bookings</h2>
           <ul>
-            <li v-for="booking in bookings.pending" :key="booking.id" class="py-2 border-b text-sm">
-              <strong>{{ booking.customer?.name }}</strong> -
-              {{ booking.service?.name }} @ {{ booking.location }} on {{ formatDate(booking.start_date) }}
+            <li v-for="booking in bookings.pending" :key="booking.id" class="py-2 text-sm">
+              <div class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2">
+                <div>
+                  <strong>{{ booking.customer?.name }}</strong> –
+                  {{ booking.service?.name }} @ {{ booking.location }}<br />
+                  <span class="text-gray-800 text-xs">{{ formatDate(booking.start_date) }}</span>
+                </div>
+              </div>
             </li>
-            <li v-if="bookings.pending.length === 0" class="text-gray-500">No pending bookings</li>
+            <li v-if="bookings.pending.length === 0" class="text-gray-800">No pending bookings</li>
           </ul>
         </div>
       </div>
 
       <div class="row-span-2 rounded-xl bg-white p-4 shadow overflow-y-auto">
-        <h2 class="text-xl font-semibold mb-4">All Bookings</h2>
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">All Bookings</h2>
         <ul>
-          <li v-for="booking in bookings.all" :key="booking.id" class="py-2 border-b text-sm">
-            <strong>{{ booking.customer?.name }}</strong> on {{ formatDate(booking.start_date) }} ({{ booking.status }})
+          <li v-for="booking in bookings.all" :key="booking.id" class="py-2 text-sm">
+            <div class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2">
+              <div>
+                <strong>{{ booking.customer?.name }}</strong> –
+                {{ booking.service?.name }} @ {{ booking.location }}<br />
+                <span class="text-gray-800 text-xs">{{ formatDate(booking.start_date) }} ({{ booking.status }})</span>
+              </div>
+            </div>
           </li>
-          <li v-if="bookings.all.length === 0" class="text-gray-500">No bookings found</li>
+          <li v-if="bookings.all.length === 0" class="text-gray-800">No bookings found</li>
         </ul>
       </div>
     </main>
 
-    <BookingModal
-      v-if="openBookingModal"
-      @close="openBookingModal = false"
-      @refresh="fetchBookings()"
-    />
+    <BookingModal v-if="openBookingModal" @close="openBookingModal = false" @refresh="fetchBookings()" />
   </div>
 </template>
 
