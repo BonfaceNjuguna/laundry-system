@@ -7,7 +7,8 @@
       <div class="rounded-xl bg-white p-4 shadow">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold text-gray-800">All Bookings</h2>
-          <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700" @click="openBooking(null)">
+          <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700 cursor-pointer"
+            @click="openBooking(null)">
             + Add a Booking
           </button>
         </div>
@@ -19,7 +20,9 @@
                 <strong>{{ booking.customer?.name }}</strong> –
                 {{ booking.service?.name }} @ {{ booking.location }}<br />
                 <span class="text-gray-800 text-xs">
-                  {{ formatDate(booking.start_date) }} ({{ booking.status }})
+                  {{ formatDate(booking.start_date) }} <br>
+                  Services: {{booking.services ? booking.services.map(s => s.name).join(', ') : ''}}<br>
+                  Status: {{ booking.status }}
                 </span>
               </div>
               <div class="flex gap-2">

@@ -3,7 +3,7 @@
     <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-2xl">
       <h2 class="text-xl font-semibold mb-4">{{ isEditing ? 'Edit Booking' : 'New Booking' }}</h2>
 
-      <form @submit.prevent="saveBooking" class="space-y-4">
+      <form @submit.prevent="saveBooking" class="space-y-4 text-gray-800">
         <div>
           <label class="block text-sm font-medium mb-1">Customer</label>
           <select v-model="form.customer_id" class="w-full border rounded p-2">
@@ -14,15 +14,21 @@
           </select>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-1">Service</label>
-          <select v-model="form.service_id" class="w-full border rounded p-2">
-            <option value="">-- Select Service --</option>
-            <option v-for="s in services" :key="s.id" :value="s.id">
-              {{ s.name }}
-            </option>
-          </select>
+        <div class="relative">
+          <label class="block text-sm font-medium mb-1">Services</label>
+          <div @click="toggleServiceDropdown" class="w-full border rounded p-2 cursor-pointer">
+            {{ selectedServiceNames.length ? selectedServiceNames.join(', ') : 'Select services' }}
+          </div>
+
+          <div v-if="showServiceDropdown"
+            class="absolute z-10 bg-white border rounded shadow-md w-full mt-1 max-h-60 overflow-y-auto">
+            <label v-for="service in services" :key="service.id" class="flex items-center px-4 py-2 hover:bg-gray-100">
+              <input type="checkbox" class="mr-2" :value="service.id" v-model="form.service_ids" />
+              {{ service.name }}
+            </label>
+          </div>
         </div>
+
 
         <div>
           <label class="block text-sm font-medium mb-1">Location</label>
@@ -71,10 +77,19 @@
         </div>
 
         <div class="flex justify-end space-x-2">
-          <button type="button" @click="$emit('close')" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">
-            {{ isEditing ? 'Update' : 'Create' }}
+          <button type="button" @click="$emit('close')" class="px-4 py-2 bg-gray-300 rounded cursor-pointer"
+            :disabled="submitting">
+            Cancel
           </button>
+          <button type="submit"
+            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 cursor-pointer disabled:opacity-60"
+            :disabled="submitting">
+            {{ submitting ? 'Processing...' : (isEditing ? 'Update' : 'Create') }}
+          </button>
+        </div>
+        <div v-if="message" class="mt-2 text-center text-sm"
+          :class="message.includes('successfully') ? 'text-green-600' : 'text-red-600'">
+          {{ message }}
         </div>
       </form>
     </div>
@@ -82,7 +97,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import api from '@/api/axios'
 
 const emit = defineEmits(['close', 'refresh'])
@@ -91,9 +106,12 @@ const props = defineProps({
 })
 
 const isEditing = ref(false)
+const submitting = ref(false)
+const message = ref('')
+
 const form = ref({
   customer_id: '',
-  service_id: '',
+  service_ids: [],
   location: '',
   start_date: '',
   end_date: '',
@@ -101,6 +119,18 @@ const form = ref({
   status: 'pending',
   payment_method: '',
   is_paid: false,
+})
+
+const showServiceDropdown = ref(false)
+
+function toggleServiceDropdown() {
+  showServiceDropdown.value = !showServiceDropdown.value
+}
+
+const selectedServiceNames = computed(() => {
+  return services.value
+    .filter(s => Array.isArray(form.value.service_ids) && form.value.service_ids.includes(s.id))
+    .map(s => s.name)
 })
 
 const customers = ref([])
@@ -118,7 +148,7 @@ async function fetchData() {
 function resetForm() {
   form.value = {
     customer_id: '',
-    service_id: '',
+    service_ids: [],
     location: '',
     start_date: '',
     end_date: '',
@@ -130,19 +160,29 @@ function resetForm() {
 }
 
 async function saveBooking() {
+  submitting.value = true
+  message.value = ''
   try {
     if (isEditing.value) {
       await api.put(`/api/bookings/${props.booking.id}`, form.value)
+      message.value = 'Booking updated successfully!'
     } else {
       await api.post('/api/bookings', form.value)
+      message.value = 'Booking created successfully!'
     }
     emit('refresh')
-    emit('close')
+    setTimeout(() => {
+      emit('close')
+      message.value = ''
+    }, 1000)
   } catch (error) {
-    console.error('Error saving booking', error)
     if (error.response?.data?.errors) {
-      alert('Validation failed: ' + JSON.stringify(error.response.data.errors))
+      message.value = 'Validation failed: ' + JSON.stringify(error.response.data.errors)
+    } else {
+      message.value = 'Failed to save booking.'
     }
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -151,7 +191,12 @@ watch(
   (newVal) => {
     if (newVal) {
       isEditing.value = true
-      form.value = { ...newVal }
+      form.value = {
+        ...newVal,
+        service_ids: Array.isArray(newVal.services)
+          ? newVal.services.map(s => s.id)
+          : []
+      }
     } else {
       isEditing.value = false
       resetForm()
@@ -161,4 +206,18 @@ watch(
 )
 
 onMounted(fetchData)
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
+function handleClickOutside(e) {
+  const dropdown = document.querySelector('.relative')
+  if (dropdown && !dropdown.contains(e.target)) {
+    showServiceDropdown.value = false
+  }
+}
 </script>

@@ -12,14 +12,28 @@ class BookingController extends Controller
 {
     public function index(): JsonResponse
     {
-        $bookings = Booking::with(['customer', 'service'])->get();
+        $bookings = Booking::with(['customer', 'services'])->get();
         return response()->json($bookings);
     }
 
     public function store(StoreBookingRequest $storeBookingRequest): JsonResponse
     {
-        $booking = Booking::create($storeBookingRequest->validated());
-        return response()->json($booking, 201);
+        try {
+            $data = $storeBookingRequest->validated();
+            $serviceIds = $data['service_ids'];
+            unset($data['service_ids']);
+
+            $booking = Booking::create($data);
+            $booking->services()->sync($serviceIds);
+
+            return response()->json($booking->load('services'), 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to save booking',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ], 500);
+        }
     }
 
     public function show(Booking $booking): JsonResponse
@@ -29,8 +43,14 @@ class BookingController extends Controller
 
     public function update(StoreBookingRequest $storeBookingRequest, Booking $booking): JsonResponse
     {
-        $booking->update($storeBookingRequest->validated());
-        return response()->json($booking);
+        $data = $storeBookingRequest->validated();
+        $serviceIds = $data['service_ids'];
+        unset($data['service_ids']);
+
+        $booking->update($data);
+        $booking->services()->sync($serviceIds);
+
+        return response()->json($booking->load('services'));
     }
 
     public function destroy(Booking $booking): JsonResponse

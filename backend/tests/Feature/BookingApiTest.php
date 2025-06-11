@@ -40,7 +40,7 @@ class BookingApiTest extends TestCase
 
         $data = [
             'customer_id' => $customer->id,
-            'service_id' => $service->id,
+            'service_ids' => [$service->id],
             'location' => 'Nairobi',
             'start_date' => now()->addDay()->toDateTimeString(),
             'end_date' => now()->addDays(2)->toDateTimeString(),
@@ -53,14 +53,27 @@ class BookingApiTest extends TestCase
         $response = $this->postJson('/api/bookings', $data);
         $response->assertStatus(201)->assertJsonFragment([
             'customer_id' => $customer->id,
-            'service_id' => $service->id,
             'location' => 'Nairobi',
             'amount' => 1500.00,
             'status' => 'pending',
             'payment_method' => 'mpesa',
             'is_paid' => false,
         ]);
-        $this->assertDatabaseHas('bookings', $data);
+        $this->assertDatabaseHas('bookings', [
+        'customer_id' => $customer->id,
+        'location' => 'Nairobi',
+        'start_date' => $data['start_date'],
+        'end_date' => $data['end_date'],
+        'amount' => 1500.00,
+        'status' => 'pending',
+        'payment_method' => 'mpesa',
+        'is_paid' => false,
+    ]);
+
+    $this->assertDatabaseHas('booking_service', [
+        'booking_id' => Booking::first()->id,
+        'service_id' => $service->id,
+    ]);
     }
 
     public function test_can_show_booking(): void
@@ -76,14 +89,36 @@ class BookingApiTest extends TestCase
 
     public function test_can_update_booking(): void
     {
-        $booking = Booking::factory()->create();
+        $customer = Customer::factory()->create();
+        $service = Service::factory()->create();
 
-        $data = ['status' => 'confirmed'];
+        // Create the booking
+        $booking = Booking::factory()->create([
+            'customer_id' => $customer->id,
+        ]);
 
-        $response = $this->putJson("/api/bookings/{$booking->id}", array_merge($booking->toArray(), $data));
+        $booking->services()->sync([$service->id]);
+
+        // Prepare full update data
+        $data = [
+            'customer_id' => $customer->id,
+            'location' => 'Updated Location',
+            'start_date' => now()->addDays(1)->toDateTimeString(),
+            'end_date' => now()->addDays(2)->toDateTimeString(),
+            'amount' => 2500.00,
+            'status' => 'confirmed',
+            'payment_method' => 'mpesa',
+            'is_paid' => true,
+            'service_ids' => [$service->id],
+        ];
+
+        $response = $this->putJson("/api/bookings/{$booking->id}", $data);
 
         $response->assertStatus(200)->assertJsonFragment([
             'status' => 'confirmed',
+            'location' => 'Updated Location',
+            'amount' => 2500.00,
+            'is_paid' => true,
         ]);
     }
 

@@ -30,16 +30,20 @@
         <button
           class="px-4 py-1 bg-gray-300 rounded hover:bg-gray-400"
           @click="$emit('close')"
+          :disabled="submitting"
         >
           Cancel
         </button>
         <button
-          class="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+          class="px-4 py-1 bg-green-500 text-white rounded hover:bg-green-700 disabled:opacity-60"
           @click="saveCustomer"
           :disabled="submitting"
         >
           {{ submitting ? 'Saving...' : 'Save' }}
         </button>
+      </div>
+      <div v-if="message" class="mt-2 text-center text-sm" :class="message.includes('successfully') ? 'text-green-600' : 'text-red-600'">
+        {{ message }}
       </div>
     </div>
   </div>
@@ -60,6 +64,7 @@ const form = ref({
   email: ''
 })
 const submitting = ref(false)
+const message = ref('')
 
 watch(() => props.customer, (val) => {
   form.value = val
@@ -69,15 +74,22 @@ watch(() => props.customer, (val) => {
 
 async function saveCustomer() {
   submitting.value = true
+  message.value = ''
   try {
     if (props.customer?.id) {
       await api.put(`/api/customers/${props.customer.id}`, form.value)
+      message.value = 'Customer updated successfully!'
     } else {
       await api.post('/api/customers', form.value)
+      message.value = 'Customer created successfully!'
     }
     emit('saved')
+    setTimeout(() => {
+      emit('close')
+      message.value = ''
+    }, 1000)
   } catch (err) {
-    alert('Failed to save customer')
+    message.value = 'Failed to save customer'
   } finally {
     submitting.value = false
   }

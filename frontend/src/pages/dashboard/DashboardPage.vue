@@ -13,7 +13,10 @@
                 <div>
                   <strong>{{ booking.customer?.name }}</strong> –
                   {{ booking.service?.name }} @ {{ booking.location }}<br />
-                  <span class="text-gray-800 text-xs">{{ formatDate(booking.start_date) }}</span>
+                  <span class="text-gray-800 text-xs">
+                    Services: {{booking.services ? booking.services.map(s => s.name).join(', ') : ''}}<br>
+                    Date: {{ formatDate(booking.start_date) }} <br>
+                  </span>
                 </div>
               </div>
             </li>
@@ -29,7 +32,7 @@
                 <div>
                   <strong>{{ booking.customer?.name }}</strong> –
                   {{ booking.service?.name }} @ {{ booking.location }}<br />
-                  <span class="text-gray-800 text-xs">{{ formatDate(booking.start_date) }}</span>
+                  <span class="text-gray-800 text-xs">Date: {{ formatDate(booking.start_date) }}</span>
                 </div>
               </div>
             </li>
@@ -46,7 +49,8 @@
               <div>
                 <strong>{{ booking.customer?.name }}</strong> –
                 {{ booking.service?.name }} @ {{ booking.location }}<br />
-                <span class="text-gray-800 text-xs">{{ formatDate(booking.start_date) }} ({{ booking.status }})</span>
+                <span class="text-gray-800 text-xs">Date: {{ formatDate(booking.start_date) }} <br>Status: {{
+                  booking.status }}</span>
               </div>
             </div>
           </li>
@@ -105,13 +109,13 @@ async function fetchBookings() {
     bookings.value.all = all
 
     bookings.value.upcoming = all.filter(b => {
-      const endDate = new Date(b.end_date || b.start_date) // fallback if no end_date
-      return endDate >= now && b.status !== 'pending' // upcoming if end_date >= today and not pending
+      const endDate = new Date(b.end_date || b.start_date)
+      return endDate >= now
     })
 
     bookings.value.pending = all.filter(b => {
       const endDate = new Date(b.end_date || b.start_date)
-      return endDate < now || b.status === 'pending' // pending if end_date < today OR status pending
+      return endDate < now && b.status === 'pending'
     })
   } catch {
     bookings.value = { all: [], pending: [], upcoming: [] }

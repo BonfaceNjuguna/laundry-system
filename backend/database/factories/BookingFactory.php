@@ -22,7 +22,6 @@ class BookingFactory extends Factory
     {
         return [
             'customer_id' => Customer::factory(),
-            'service_id' => Service::factory(),
             'location' => $this->faker->address,
             'start_date' => now()->addDay(),
             'end_date' => now()->addDays(2),

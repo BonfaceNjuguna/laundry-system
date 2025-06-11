@@ -11,7 +11,7 @@
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-semibold text-gray-800">All Services</h2>
           <button
-            class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700"
+            class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700 cursor-pointer"
             @click="openServiceModal(null)"
           >
             + Add Service
