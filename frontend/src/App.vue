@@ -1,5 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-100 text-gray-900">
-    <router-view />
+  <div class="flex h-screen">
+    <main class="w-full overflow-y-auto">
+      <router-view />
+    </main>
   </div>
 </template>

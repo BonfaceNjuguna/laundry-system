@@ -6,7 +6,7 @@
             <p class="text-center text-gray-500" v-else>Loading user...</p>
 
             <router-link to="/bookings"
-                class="block text-center text-blue-600 hover:underline mt-4 mb-2">Bookings</router-link>
+                class="block text-center text-green-600 hover:underline mt-4 mb-2">Bookings</router-link>
             <router-link to="/customers"
                 class="block text-center text-blue-600 hover:underline mb-2">Customers</router-link>
             <router-link to="/services"

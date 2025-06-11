@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center h-screen bg-gray-100">
     <form @submit.prevent="handleLogin" class="bg-white p-8 rounded shadow-md w-full max-w-md">
-      <h2 class="flex text-2xl font-bold mb-6 justify-center">Laundry Matt</h2>
+      <h2 class="flex text-2xl font-bold mb-6 justify-center">Tichi Cleaners</h2>
 
       <div v-if="errors" class="mb-4 p-3 bg-red-100 text-red-700 rounded">
         {{ errors }}

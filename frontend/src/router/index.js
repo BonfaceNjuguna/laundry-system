@@ -5,6 +5,7 @@ import Customers from '@/views/Customers.vue';
 import Services from '@/views/Services.vue';
 
 const routes = [
+  { path: '/', redirect: '/login' },
   { path: '/login', component: LoginPage },
   { path: '/dashboard', component: () => import('@/pages/dashboard/DashboardPage.vue') },
   { path: '/bookings', component: Bookings },
