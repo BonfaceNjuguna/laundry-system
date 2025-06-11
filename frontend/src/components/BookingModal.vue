@@ -54,7 +54,6 @@
         <div>
           <label class="block text-sm font-medium mb-1">Status</label>
           <select v-model="form.status" class="w-full border rounded p-2">
-            <option value="pending">Pending</option>
             <option value="confirmed">Confirmed</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
@@ -116,7 +115,7 @@ const form = ref({
   start_date: '',
   end_date: '',
   amount: '',
-  status: 'pending',
+  status: 'confirmed',
   payment_method: '',
   is_paid: false,
 })
@@ -153,7 +152,7 @@ function resetForm() {
     start_date: '',
     end_date: '',
     amount: '',
-    status: 'pending',
+    status: 'confirmed',
     payment_method: '',
     is_paid: false,
   }

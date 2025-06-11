@@ -17,12 +17,12 @@
           <li v-for="booking in bookings.all" :key="booking.id" class="py-2 text-sm">
             <div class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2">
               <div>
-                <strong>{{ booking.customer?.name }}</strong> –
-                {{ booking.service?.name }} @ {{ booking.location }}<br />
+                <strong>{{ booking.customer?.name }}</strong><br />
                 <span class="text-gray-800 text-xs">
                   {{ formatDate(booking.start_date) }} <br>
                   Services: {{booking.services ? booking.services.map(s => s.name).join(', ') : ''}}<br>
-                  Status: {{ booking.status }}
+                  Status: {{ booking.status }} <br />
+                  Paid: {{ booking.is_paid ? 'Yes' : 'No' }}
                 </span>
               </div>
               <div class="flex gap-2">

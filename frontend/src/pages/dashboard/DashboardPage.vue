@@ -11,9 +11,9 @@
             <li v-for="booking in bookings.upcoming" :key="booking.id" class="py-2 text-sm">
               <div class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2">
                 <div>
-                  <strong>{{ booking.customer?.name }}</strong> –
-                  {{ booking.service?.name }} @ {{ booking.location }}<br />
+                  <strong>{{ booking.customer?.name }}</strong> <br />
                   <span class="text-gray-800 text-xs">
+                    Location: {{ booking.location }} <br>
                     Services: {{booking.services ? booking.services.map(s => s.name).join(', ') : ''}}<br>
                     Date: {{ formatDate(booking.start_date) }} <br>
                   </span>
@@ -25,18 +25,21 @@
         </div>
 
         <div class="rounded-xl bg-white p-4 shadow">
-          <h2 class="text-xl font-semibold mb-2 text-gray-800">Pending Bookings</h2>
+          <h2 class="text-xl font-semibold mb-2 text-gray-800">Unpaid Bookings</h2>
           <ul>
-            <li v-for="booking in bookings.pending" :key="booking.id" class="py-2 text-sm">
+            <li v-for="booking in bookings.unpaid" :key="booking.id" class="py-2 text-sm">
               <div class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2">
                 <div>
-                  <strong>{{ booking.customer?.name }}</strong> –
-                  {{ booking.service?.name }} @ {{ booking.location }}<br />
-                  <span class="text-gray-800 text-xs">Date: {{ formatDate(booking.start_date) }}</span>
+                  <strong>{{ booking.customer?.name }}</strong><br />
+                  <span class="text-gray-800 text-xs">
+                    Location: {{ booking.location }} <br>
+                    Services: {{booking.services ? booking.services.map(s => s.name).join(', ') : ''}}<br>
+                    Date: {{ formatDate(booking.start_date) }} <br>
+                  </span>
                 </div>
               </div>
             </li>
-            <li v-if="bookings.pending.length === 0" class="text-gray-800">No pending bookings</li>
+            <li v-if="bookings.unpaid.length === 0" class="text-gray-800">No unpaid bookings</li>
           </ul>
         </div>
       </div>
@@ -47,10 +50,13 @@
           <li v-for="booking in bookings.all" :key="booking.id" class="py-2 text-sm">
             <div class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2">
               <div>
-                <strong>{{ booking.customer?.name }}</strong> –
-                {{ booking.service?.name }} @ {{ booking.location }}<br />
-                <span class="text-gray-800 text-xs">Date: {{ formatDate(booking.start_date) }} <br>Status: {{
-                  booking.status }}</span>
+                <strong>{{ booking.customer?.name }}</strong><br />
+                <span class="text-gray-800 text-xs">
+                  Location: {{ booking.location }} <br>
+                  Services: {{booking.services ? booking.services.map(s => s.name).join(', ') : ''}}<br>
+                  Date: {{ formatDate(booking.start_date) }} <br>
+                  Status: {{ booking.status }}
+                </span>
               </div>
             </div>
           </li>
@@ -81,7 +87,7 @@ const router = useRouter()
 const bookings = ref({
   all: [],
   upcoming: [],
-  pending: []
+  unpaid: []
 })
 
 function formatDate(dateStr) {
@@ -113,12 +119,9 @@ async function fetchBookings() {
       return endDate >= now
     })
 
-    bookings.value.pending = all.filter(b => {
-      const endDate = new Date(b.end_date || b.start_date)
-      return endDate < now && b.status === 'pending'
-    })
+    bookings.value.unpaid = all.filter(b => !b.is_paid)
   } catch {
-    bookings.value = { all: [], pending: [], upcoming: [] }
+    bookings.value = { all: [], unpaid: [], upcoming: [] }
   } finally {
     loadingBookings.value = false
   }
