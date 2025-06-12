@@ -19,6 +19,7 @@ class Booking extends Model
         'amount',
         'status',
         'payment_method',
+        'mpesa_transaction_id',
         'is_paid',
     ];
 

@@ -69,6 +69,11 @@
             <option value="card">Card</option>
           </select>
         </div>
+        <div v-if="form.payment_method === 'mpesa'">
+          <label class="block text-sm font-medium mb-1">Mpesa Code</label>
+          <input v-model="form.mpesa_transaction_id" type="text" class="w-full border rounded p-2"
+            placeholder="Enter Mpesa Transaction ID" />
+        </div>
 
         <div class="flex items-center">
           <input v-model="form.is_paid" type="checkbox" id="is_paid" class="mr-2" />
@@ -117,6 +122,7 @@ const form = ref({
   amount: '',
   status: 'confirmed',
   payment_method: '',
+  mpesa_transaction_id: '',
   is_paid: false,
 })
 
@@ -154,6 +160,7 @@ function resetForm() {
     amount: '',
     status: 'confirmed',
     payment_method: '',
+    mpesa_transaction_id: '',
     is_paid: false,
   }
 }
@@ -194,7 +201,8 @@ watch(
         ...newVal,
         service_ids: Array.isArray(newVal.services)
           ? newVal.services.map(s => s.id)
-          : []
+          : [],
+        mpesa_transaction_id: newVal.mpesa_transaction_id || '',
       }
     } else {
       isEditing.value = false

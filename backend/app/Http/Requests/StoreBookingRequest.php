@@ -31,6 +31,7 @@ class StoreBookingRequest extends FormRequest
             'amount' => 'required|numeric|min:0',
             'status' => 'required|in:pending,confirmed,completed,cancelled',
             'payment_method' => 'nullable|in:mpesa,cash,card',
+            'mpesa_transaction_id' => 'nullable|string|max:255',
             'is_paid' => 'boolean',
         ];
     }
