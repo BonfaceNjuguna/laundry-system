@@ -30,12 +30,21 @@
                 <Cog6ToothIcon class="w-5 h-5 mr-2" /> Services
             </router-link>
             <router-link
-                to="/dashboard"
+                to="/accounting"
                 class="flex items-center justify-center rounded-md transition-colors mb-6 px-2 py-2 text-gray-700 hover:bg-gray-100"
                 active-class="text-green-700 bg-gray-100"
                 exact-active-class="text-green-700 bg-gray-100"
             >
-                <ChartBarIcon class="w-5 h-5 mr-2" /> Dashboard
+                <ChartBarIcon class="w-5 h-5 mr-2" /> Accounting
+            </router-link>
+
+            <router-link
+                to="/home"
+                class="flex items-center justify-center rounded-md transition-colors mb-6 px-2 py-2 text-gray-700 hover:bg-gray-100"
+                active-class="text-green-700 bg-gray-100"
+                exact-active-class="text-green-700 bg-gray-100"
+            >
+                <HomeModernIcon class="w-5 h-5 mr-2" /> Home
             </router-link>
 
             <button class="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-700 transition mb-6 cursor-pointer"
@@ -46,13 +55,13 @@
 
         <button class="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-700 transition cursor-pointer flex items-center justify-center gap-2"
             @click="$emit('logout')">
-            <ArrowLongLeftIcon class="w-5 h-5" /> Logout
+            <ArrowLeftStartOnRectangleIcon class="w-5 h-5" /> Logout
         </button>
     </aside>
 </template>
 
 <script setup>
-import { BookOpenIcon, UserGroupIcon, Cog6ToothIcon, ChartBarIcon, ArrowLongLeftIcon } from '@heroicons/vue/24/outline'
+import { BookOpenIcon, UserGroupIcon, Cog6ToothIcon, ChartBarIcon, ArrowLongLeftIcon, HomeModernIcon, ArrowLeftStartOnRectangleIcon } from '@heroicons/vue/24/outline'
 defineProps(['username'])
 defineEmits(['open-booking', 'logout'])
 </script>
