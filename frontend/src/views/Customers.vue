@@ -26,7 +26,10 @@
             class="flex justify-between items-center hover:bg-gray-100 rounded-md transition px-2 py-2"
           >
             <div>
-              <strong>{{ customer.name }}</strong><br />
+              <span class="inline-flex items-center gap-1">
+                <UserCircleIcon class="w-4 h-4" />
+                <strong>{{ customer.name }}</strong>
+              </span><br />
               <span class="text-gray-800 text-xs">
                 Phone: {{ customer.phone }}<br />
                 Email: {{ customer.email || 'N/A' }}
@@ -76,6 +79,7 @@ import Sidebar from '@/components/SideBar.vue'
 import BookingModal from '@/components/BookingModal.vue'
 import CustomerModal from '@/components/CustomerModal.vue'
 import api from '@/api/axios'
+import { UserCircleIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
 const username = ref('')
