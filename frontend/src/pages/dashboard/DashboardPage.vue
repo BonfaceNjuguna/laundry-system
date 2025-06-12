@@ -92,7 +92,14 @@ const bookings = ref({
 
 function formatDate(dateStr) {
   const date = new Date(dateStr)
-  return date.toLocaleDateString()
+  return date.toLocaleDateString(undefined, {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 async function fetchUser() {
