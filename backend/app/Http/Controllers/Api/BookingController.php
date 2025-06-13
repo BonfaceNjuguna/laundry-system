@@ -4,17 +4,34 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookingRequest;
+use Illuminate\Http\Request;
 use App\Models\Booking;
 
 use Illuminate\Http\JsonResponse;
 
 class BookingController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $bookings = Booking::with(['customer', 'services'])->get();
+        $query = Booking::with(['customer', 'services']);
+
+        if ($request->filled('from') && $request->filled('to')) {
+            $query->whereBetween('start_date', [$request->from, $request->to]);
+        }
+
+        if ($request->filled('service_id')) {
+            $query->whereHas('services', fn ($q) => $q->where('services.id', $request->service_id));
+        }
+
+        if ($request->filled('customer_id')) {
+            $query->where('customer_id', $request->customer_id);
+        }
+
+        $bookings = $query->get();
+
         return response()->json($bookings);
     }
+
 
     public function store(StoreBookingRequest $storeBookingRequest): JsonResponse
     {

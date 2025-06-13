@@ -37,7 +37,7 @@ export function useAuth() {
       await getUser();
 
       status.value = 'Login successful. Redirecting...';
-      setTimeout(() => router.push('/dashboard'), 1000);
+      setTimeout(() => router.push('/home'), 1000);
     } catch (err) {
       if (err.response?.status === 422) {
         const allErrors = Object.values(err.response.data.errors).flat().join(' ');
