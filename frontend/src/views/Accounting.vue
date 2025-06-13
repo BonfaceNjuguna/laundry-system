@@ -25,10 +25,10 @@
                         <canvas ref="incomePieChart" class="w-full h-full"></canvas>
                     </div>
                     <ul class="mt-4 space-y-1 text-gray-600">
-                        <!-- <li v-for="i in incomeBreakdown" :key="i.name" class="flex justify-between border-b border-gray-200 pb-1">
+                        <li v-for="i in incomeBreakdown" :key="i.name" class="flex justify-between border-b border-gray-200 pb-1">
                             <span>{{ i.name }}</span>
                             <span>KES {{ i.amount.toFixed(2) }}</span>
-                        </li> -->
+                        </li>
                         <li v-if="incomeBreakdown.length === 0" class="text-center text-gray-500 italic">No income data
                             available.</li>
                     </ul>

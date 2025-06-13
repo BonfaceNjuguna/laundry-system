@@ -61,6 +61,9 @@ class BookingController extends Controller
             // Create expenses
             foreach ($expenses as $expense) {
                 $expense['booking_id'] = $booking->id;
+                if (!isset($expense['date'])) {
+                    $expense['date'] = now(); // Default to current date if not provided
+                }
                 unset($expense['id']); // Ensure no ID is passed to create a new expense
                 $booking->expenses()->create($expense);
             }
@@ -105,6 +108,9 @@ class BookingController extends Controller
         $booking->expenses()->delete();
         foreach ($expenses as $expense) {
             $expense['booking_id'] = $booking->id;
+            if (!isset($expense['date'])) {
+                $expense['date'] = now(); // Default to current date if not provided
+            }
             unset($expense['id']); // Ensure no ID is passed to create a new expense
             $booking->expenses()->create($expense);
         }

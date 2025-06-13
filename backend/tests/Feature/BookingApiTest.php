@@ -40,40 +40,48 @@ class BookingApiTest extends TestCase
 
         $data = [
             'customer_id' => $customer->id,
-            'service_ids' => [$service->id],
+            'services' => [
+                ['service_id' => $service->id, 'amount' => 1500.00]
+            ],
             'location' => 'Nairobi',
             'start_date' => now()->addDay()->toDateTimeString(),
             'end_date' => now()->addDays(2)->toDateTimeString(),
-            'amount' => 1500.00,
             'status' => 'pending',
             'payment_method' => 'mpesa',
             'is_paid' => false,
+            'expenses' => [
+                ['category' => 'Transport', 'amount' => 100, 'description' => 'Taxi', 'date' => now()->toDateTimeString()]
+            ]
         ];
         
         $response = $this->postJson('/api/bookings', $data);
         $response->assertStatus(201)->assertJsonFragment([
             'customer_id' => $customer->id,
             'location' => 'Nairobi',
-            'amount' => 1500.00,
             'status' => 'pending',
             'payment_method' => 'mpesa',
             'is_paid' => false,
         ]);
         $this->assertDatabaseHas('bookings', [
-        'customer_id' => $customer->id,
-        'location' => 'Nairobi',
-        'start_date' => $data['start_date'],
-        'end_date' => $data['end_date'],
-        'amount' => 1500.00,
-        'status' => 'pending',
-        'payment_method' => 'mpesa',
-        'is_paid' => false,
-    ]);
+            'customer_id' => $customer->id,
+            'location' => 'Nairobi',
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'status' => 'pending',
+            'payment_method' => 'mpesa',
+            'is_paid' => false,
+        ]);
 
-    $this->assertDatabaseHas('booking_service', [
-        'booking_id' => Booking::first()->id,
-        'service_id' => $service->id,
-    ]);
+        $this->assertDatabaseHas('booking_service', [
+            'booking_id' => Booking::first()->id,
+            'service_id' => $service->id,
+            'amount' => 1500.00,
+        ]);
+        $this->assertDatabaseHas('expenses', [
+            'booking_id' => Booking::first()->id,
+            'category' => 'Transport',
+            'amount' => 100,
+        ]);
     }
 
     public function test_can_show_booking(): void
@@ -102,23 +110,49 @@ class BookingApiTest extends TestCase
         // Prepare full update data
         $data = [
             'customer_id' => $customer->id,
+            'services' => [
+                ['service_id' => $service->id, 'amount' => 2500.00]
+            ],
             'location' => 'Updated Location',
             'start_date' => now()->addDays(1)->toDateTimeString(),
             'end_date' => now()->addDays(2)->toDateTimeString(),
-            'amount' => 2500.00,
             'status' => 'confirmed',
             'payment_method' => 'mpesa',
             'is_paid' => true,
-            'service_ids' => [$service->id],
+            // 'service_ids' => [$service->id], // <-- REMOVE THIS LINE
+            'expenses' => [
+                ['category' => 'Transport', 'amount' => 100, 'description' => 'Taxi', 'date' => now()->toDateTimeString()]
+            ]
         ];
 
         $response = $this->putJson("/api/bookings/{$booking->id}", $data);
 
         $response->assertStatus(200)->assertJsonFragment([
-            'status' => 'confirmed',
+            'customer_id' => $customer->id,
             'location' => 'Updated Location',
-            'amount' => 2500.00,
+            'status' => 'confirmed',
+            'payment_method' => 'mpesa',
             'is_paid' => true,
+        ]);
+        $this->assertDatabaseHas('bookings', [
+            'id' => $booking->id,
+            'customer_id' => $customer->id,
+            'location' => 'Updated Location',
+            'start_date' => $data['start_date'],
+            'end_date' => $data['end_date'],
+            'status' => 'confirmed',
+            'payment_method' => 'mpesa',
+            'is_paid' => true,
+        ]);
+        $this->assertDatabaseHas('booking_service', [
+            'booking_id' => $booking->id,
+            'service_id' => $service->id,
+            'amount' => 2500.00,
+        ]);
+        $this->assertDatabaseHas('expenses', [
+            'booking_id' => $booking->id,
+            'category' => 'Transport',
+            'amount' => 100,
         ]);
     }
 
