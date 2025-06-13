@@ -31,7 +31,7 @@ class Booking extends Model
 
     public function services()
     {
-        return $this->belongsToMany(Service::class, 'booking_service');
+        return $this->belongsToMany(Service::class, 'booking_service')->withPivot('amount');
     }
 
     public function expenses()

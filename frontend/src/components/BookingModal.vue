@@ -14,21 +14,39 @@
           </select>
         </div>
 
-        <div class="relative">
+        <!-- Services Section -->
+        <div>
           <label class="block text-sm font-medium mb-1">Services</label>
-          <div @click="toggleServiceDropdown" class="w-full border rounded p-2 cursor-pointer">
-            {{ selectedServiceNames.length ? selectedServiceNames.join(', ') : 'Select services' }}
+          <div v-for="(service, idx) in form.services" :key="idx" class="flex gap-2 mb-2">
+            <select v-model="service.service_id" class="border rounded p-2 flex-1">
+              <option value="">Select Service</option>
+              <option v-for="s in services" :key="s.id" :value="s.id">{{ s.name }}</option>
+            </select>
+            <input v-model.number="service.amount" type="number" min="0" placeholder="Amount"
+              class="border rounded p-2 w-32" />
+            <button type="button" @click="removeService(idx)" class="text-red-500"
+              v-if="form.services.length > 1">Remove</button>
           </div>
-
-          <div v-if="showServiceDropdown"
-            class="absolute z-10 bg-white border rounded shadow-md w-full mt-1 max-h-60 overflow-y-auto">
-            <label v-for="service in services" :key="service.id" class="flex items-center px-4 py-2 hover:bg-gray-100">
-              <input type="checkbox" class="mr-2" :value="service.id" v-model="form.service_ids" />
-              {{ service.name }}
-            </label>
-          </div>
+          <button type="button" @click="addService" class="text-green-600 underline">+ Add Service</button>
         </div>
 
+        <!-- Expenses Section -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Expenses</label>
+          <div v-for="(expense, idx) in form.expenses" :key="idx" class="flex gap-2 mb-2">
+            <select v-model="expense.category" class="border rounded p-2 flex-1">
+              <option value="">Select Category</option>
+              <option v-for="cat in expenseCategories" :key="cat" :value="cat">{{ cat }}</option>
+            </select>
+            <input v-model.number="expense.amount" type="number" min="0" placeholder="Amount"
+              class="border rounded p-2 w-32" />
+            <input v-model="expense.description" type="text" placeholder="Description (optional)"
+              class="border rounded p-2 flex-1" />
+            <button type="button" @click="removeExpense(idx)" class="text-red-500"
+              v-if="form.expenses.length > 1">Remove</button>
+          </div>
+          <button type="button" @click="addExpense" class="text-green-600 underline">+ Add Expense</button>
+        </div>
 
         <div>
           <label class="block text-sm font-medium mb-1">Location</label>
@@ -44,11 +62,6 @@
             <label class="block text-sm font-medium mb-1">End Date</label>
             <input v-model="form.end_date" type="datetime-local" class="w-full border rounded p-2" />
           </div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-1">Amount</label>
-          <input v-model.number="form.amount" type="number" min="0" class="w-full border rounded p-2" />
         </div>
 
         <div>
@@ -113,30 +126,41 @@ const isEditing = ref(false)
 const submitting = ref(false)
 const message = ref('')
 
+const expenseCategories = [
+  'Transport',
+  'Detergents',
+  'Salaries',
+  'Electricity',
+  'Water',
+  'Maintenance',
+  'Other'
+]
+
 const form = ref({
   customer_id: '',
-  service_ids: [],
+  services: [{ service_id: '', amount: 0 }],
+  expenses: [{ category: '', amount: 0, description: '' }],
   location: '',
   start_date: '',
   end_date: '',
-  amount: '',
   status: 'confirmed',
   payment_method: '',
   mpesa_transaction_id: '',
   is_paid: false,
 })
 
-const showServiceDropdown = ref(false)
-
-function toggleServiceDropdown() {
-  showServiceDropdown.value = !showServiceDropdown.value
+function addService() {
+  form.value.services.push({ service_id: '', amount: 0 })
 }
-
-const selectedServiceNames = computed(() => {
-  return services.value
-    .filter(s => Array.isArray(form.value.service_ids) && form.value.service_ids.includes(s.id))
-    .map(s => s.name)
-})
+function removeService(idx) {
+  form.value.services.splice(idx, 1)
+}
+function addExpense() {
+  form.value.expenses.push({ category: '', amount: 0, description: '' })
+}
+function removeExpense(idx) {
+  form.value.expenses.splice(idx, 1)
+}
 
 const customers = ref([])
 const services = ref([])
@@ -153,11 +177,11 @@ async function fetchData() {
 function resetForm() {
   form.value = {
     customer_id: '',
-    service_ids: [],
+    services: [{ service_id: '', amount: 0 }],
+    expenses: [{ category: '', amount: 0, description: '' }],
     location: '',
     start_date: '',
     end_date: '',
-    amount: '',
     status: 'confirmed',
     payment_method: '',
     mpesa_transaction_id: '',
@@ -169,6 +193,8 @@ async function saveBooking() {
   submitting.value = true
   message.value = ''
   try {
+    form.value.expenses = form.value.expenses.filter(e => e.category && e.amount > 0)
+
     if (isEditing.value) {
       await api.put(`/api/bookings/${props.booking.id}`, form.value)
       message.value = 'Booking updated successfully!'
@@ -199,9 +225,19 @@ watch(
       isEditing.value = true
       form.value = {
         ...newVal,
-        service_ids: Array.isArray(newVal.services)
-          ? newVal.services.map(s => s.id)
-          : [],
+        services: Array.isArray(newVal.services)
+          ? newVal.services.map(s => ({
+            service_id: s.id,
+            amount: s.pivot?.amount ?? 0
+          }))
+          : [{ service_id: '', amount: 0 }],
+        expenses: Array.isArray(newVal.expenses)
+          ? newVal.expenses.map(e => ({
+            category: e.category,
+            amount: e.amount,
+            description: e.description || ''
+          }))
+          : [{ category: '', amount: 0, description: '' }],
         mpesa_transaction_id: newVal.mpesa_transaction_id || '',
       }
     } else {
