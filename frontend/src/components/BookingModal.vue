@@ -27,7 +27,7 @@
             <button type="button" @click="removeService(idx)" class="text-red-500"
               v-if="form.services.length > 1">Remove</button>
           </div>
-          <button type="button" @click="addService" class="text-green-600 underline">+ Add Service</button>
+          <button type="button" @click="addService" class="text-green-600">+ Add Service</button>
         </div>
 
         <!-- Expenses Section -->
@@ -45,7 +45,7 @@
             <button type="button" @click="removeExpense(idx)" class="text-red-500"
               v-if="form.expenses.length > 1">Remove</button>
           </div>
-          <button type="button" @click="addExpense" class="text-green-600 underline">+ Add Expense</button>
+          <button type="button" @click="addExpense" class="text-green-600">+ Add Expense</button>
         </div>
 
         <div>

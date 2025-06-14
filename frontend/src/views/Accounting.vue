@@ -25,7 +25,8 @@
                         <canvas ref="incomePieChart" class="w-full h-full"></canvas>
                     </div>
                     <ul class="mt-4 space-y-1 text-gray-600">
-                        <li v-for="i in incomeBreakdown" :key="i.name" class="flex justify-between border-b border-gray-200 pb-1">
+                        <li v-for="i in incomeBreakdown" :key="i.name"
+                            class="flex justify-between border-b border-gray-200 pb-1">
                             <span>{{ i.name }}</span>
                             <span>KES {{ i.amount.toFixed(2) }}</span>
                         </li>
@@ -58,6 +59,8 @@
                     </div>
                 </div>
             </div>
+            <BookingModal v-if="openBookingModal" :booking="selectedBooking" @close="openBookingModal = false"
+                @refresh="fetchSummary" />
         </main>
     </div>
 </template>
@@ -70,6 +73,7 @@ import api from '@/api/axios' // Assuming this is your axios instance
 
 import Sidebar from '@/components/SideBar.vue' // Assuming correct path
 import FilterBar from '@/components/FilterBar.vue' // Assuming correct path
+import BookingModal from '@/components/BookingModal.vue'
 
 // Router + data
 const router = useRouter()
@@ -139,6 +143,14 @@ function shallowEqual(obj1, obj2) {
         if (obj1[key] != obj2[key]) return false // Loose comparison for string/number values
     }
     return true
+}
+
+const openBookingModal = ref(false)
+const selectedBooking = ref(null)
+
+function handleBookingSaved() {
+    openBookingModal.value = false
+    fetchSummary()
 }
 
 /**
