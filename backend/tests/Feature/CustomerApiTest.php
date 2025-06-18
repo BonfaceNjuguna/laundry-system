@@ -73,6 +73,6 @@ class CustomerApiTest extends TestCase
         $response = $this->deleteJson("/api/customers/{$customer->id}");
 
         $response->assertStatus(204);
-        $this->assertDatabaseMissing('customers', ['id' => $customer->id]);
+        $this->assertSoftDeleted('customers', ['id' => $customer->id]);
     }
 }
