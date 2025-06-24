@@ -23,16 +23,11 @@ export function useAuth() {
     status.value = null;
 
     try {
-      await axios.get('/sanctum/csrf-cookie');
-
       const response = await axios.post('/api/login', form);
       const token = response.data.access_token;
 
-      // Save token to localStorage or a cookie
+      // Save token
       localStorage.setItem('token', token);
-
-      // Set default Authorization header for future requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       await getUser();
 
@@ -50,13 +45,14 @@ export function useAuth() {
     }
   };
 
-
   const logout = async () => {
-    await axios.post('/api/logout');
+    try {
+      await axios.post('/api/logout');
+    } catch (_) {}
+
     localStorage.removeItem('token');
     delete axios.defaults.headers.common['Authorization'];
     user.value = null;
-    status.value = '';
     router.push('/login');
   };
 
